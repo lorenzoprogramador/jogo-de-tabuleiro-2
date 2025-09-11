@@ -235,11 +235,7 @@ function createSpaceMesh(type, label) {
   const mat = new THREE.MeshStandardMaterial({ color });
   const mesh = new THREE.Mesh(geom, mat);
   if (type === 'positive' || type === 'negative') {
-    const iconMat = new THREE.MeshBasicMaterial({ color: type === 'positive' ? 0x2ecc40 : 0xe74c3c });
-    const iconGeom = new THREE.TorusGeometry(0.35, 0.13, 8, 16);
-    const icon = new THREE.Mesh(iconGeom, iconMat);
-    icon.position.y = 0.15; 
-    mesh.add(icon);
+
   }
   if (label) {
     const canvas = document.createElement('canvas');
@@ -500,7 +496,7 @@ function startGame() {
 function setupUI() {
   uiText = document.createElement('div');
   uiText.style.position = 'absolute';
-  uiText.style.top = '22px';
+  uiText.style.top = '220px';
   uiText.style.left = '50%';
   uiText.style.transform = 'translateX(-50%)';
   uiText.style.font = 'bold 32px Arial';
@@ -677,7 +673,6 @@ function setupScene() {
   scene.add(pawns[0]);
   scene.add(pawns[1]);
   diceObj = createDice();
-  scene.add(diceObj);
   const greenStack = createCardStack('green', new THREE.Vector3(-6, 0, 0)); 
   scene.add(greenStack);
   const redStack = createCardStack('red', new THREE.Vector3(6, 0, 0)); 
