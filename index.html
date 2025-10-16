@@ -3,49 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoJourney: The Path to Sustainability - Made with Ludo.ai</title>
-    <meta name="description" content="Interactive playable game created with Ludo.ai - AI-powered game development platform">
-    <meta name="generator" content="Ludo.ai">
-    <meta name="author" content="Ludo.ai">
-    <meta name="keywords" content="playable game, interactive, AI-generated, Ludo.ai, threejs">
-    <meta name="created-date" content="2025-08-07">
-    <meta name="game-engine" content="threejs">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+    <title>EcoJourney: The Path to Sustainability</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
             padding: 0;
             background: #000;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: white;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
         .game-header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 8px 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
         }
         .game-title {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
-            margin: 0 0 4px 0;
+            margin: 0 0 2px 0;
             color: #fff;
         }
         .game-info {
-            font-size: 12px;
+            font-size: 10px;
             color: rgba(255, 255, 255, 0.7);
             margin: 0;
         }
         .game-description {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 8px 0 0 0;
-            line-height: 1.4;
+            display: none;
         }
+        #gameContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        #uiText {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-shadow: 1px 1px 4px #fff, 0 0 8px #fff;
+            z-index: 200;
+            text-align: center;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            max-width: 90%;
+        }
+        .button-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90%;
+        }
+        button {
+            font-size: 16px;
+            padding: 12px 24px;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
+            user-select: none;
+        }
+        #rollButton {
+            background: #2ecc40;
+        }
+        #restartButton {
+            background: #e74c3c;
+        }
+        #startButton {
+            background: #3498db;
+            font-size: 20px;
+            padding: 16px 32px;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        @media (min-width: 768px) {
+            .game-header {
+                padding: 12px 20px;
+            }
+            .game-title {
+                font-size: 18px;
+                margin-bottom: 4px;
+            }
+            .game-info {
+                font-size: 12px;
+            }
+            .game-description {
+                display: block;
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.9);
+                margin: 8px 0 0 0;
+                line-height: 1.4;
+            }
+            #uiText {
+                top: 120px;
+                font-size: 28px;
+                padding: 12px 24px;
+            }
+            button {
+                font-size: 20px;
+                padding: 14px 32px;
+            }
+            #startButton {
+                font-size: 28px;
+                padding: 18px 48px;
+            }
+        }
+        
         .game-engine {
             display: inline-block;
             background: rgba(255, 255, 255, 0.1);
@@ -56,120 +159,43 @@
             text-transform: uppercase;
             font-weight: 500;
         }
-        #gameContainer {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 0;
-        }
-        canvas {
-            display: block;
-            margin: 0 auto;
-            max-width: 100vw;
-            max-height: 100vh;
-            width: auto;
-            height: auto;
-        }
-        body > canvas {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-        .ludo-footer {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            padding: 8px 12px;
-            background: rgba(0, 0, 0, 0.7);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 11px;
-            text-decoration: none;
-            border-top-left-radius: 4px;
-            transition: all 0.2s ease;
-            z-index: 1000;
-        }
-        .ludo-footer:hover {
-            background: rgba(0, 0, 0, 0.9);
-            color: rgba(255, 255, 255, 0.9);
-        }
     </style>
 </head>
 <body>
     <div class="game-header">
         <h1 class="game-title">EcoJourney: The Path to Sustainability</h1>
         <p class="game-info">
-            Created with Ludo.ai on 2025-08-07
+            Created with Ludo.ai
             <span class="game-engine">threejs</span>
         </p>
-        <p class="game-description">A 3D board game where players roll a die to move their pawns along a path, drawing positive or negative cards on certain spaces to advance or retreat, aiming to reach the end first. The game features a visually rich environment with a river and decorative elements.</p>
-        <p class="game-description"><strong>How to Play:</strong> Click 'Começar Jogo' to start. Click 'Rolar Dado' to roll the dice. Pawns move according to the dice roll. Land on positive spaces to draw beneficial cards and negative spaces to draw detrimental cards. The first player to reach the end wins.</p>
+        <p class="game-description"><strong>Como Jogar:</strong> Clique em 'Começar Jogo' para iniciar. Clique em 'Rolar Dado' para jogar o dado. Os peões se movem de acordo com o resultado. Casas verdes dão cartas positivas, casas vermelhas dão cartas negativas. O primeiro a chegar ao fim vence!</p>
     </div>
+    
     <div id="gameContainer"></div>
-    <a href="https://ludo.ai" target="_blank" class="ludo-footer">
-        Made with Ludo.ai
-    </a>
-    <script type="importmap" crossorigin="anonymous">{"imports": {"three": "https://unpkg.com/three@0.176.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.176.0/examples/jsm/"}}</script>
+    
+    <div id="uiText">EcoJourney</div>
+    
+    <div class="button-container">
+        <button id="rollButton" style="display: none;">Rolar Dado</button>
+        <button id="restartButton" style="display: none;">Reiniciar</button>
+        <button id="startButton">Começar Jogo</button>
+    </div>
+    
+    <script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.176.0/build/three.module.js"}}</script>
     <script type="module">
-        // Ludo.ai Playable Game
-        // Generated on: 2025-08-07
-        // Engine: threejs
-        // Title: EcoJourney: The Path to Sustainability
-        
-        // Monitor for canvas elements and move them to gameContainer
-        const gameContainer = document.getElementById('gameContainer');
-        
-        // Function to move canvas elements to gameContainer
-        function moveCanvasToContainer() {
-            const canvases = document.querySelectorAll('body > canvas');
-            canvases.forEach(canvas => {
-                if (canvas.parentElement === document.body) {
-                    gameContainer.appendChild(canvas);
-                }
-            });
-        }
-        
-        // Monitor for new canvas elements
-        const observer = new MutationObserver(() => {
-            moveCanvasToContainer();
-        });
-        observer.observe(document.body, { childList: true });
-        
-        // Initial check
-        setTimeout(moveCanvasToContainer, 100);
-        
         import * as THREE from 'three';
+
 const BOARD_SPACES = [
   { type: 'start', label: 'START' },
-  { type: 'positive' },
-  { type: 'normal' },
-  { type: 'positive' },
-  { type: 'negative' },
-  { type: 'positive' },
-  { type: 'normal' },
-  { type: 'positive' },
-  { type: 'negative' },
-  { type: 'positive' },
-  { type: 'normal' },
-  { type: 'negative' },
-  { type: 'positive' },
-  { type: 'normal' },
-  { type: 'negative' },
-  { type: 'positive' },
-  { type: 'normal' },
-  { type: 'positive' },
-  { type: 'negative' },
-  { type: 'normal' },
-  { type: 'positive' },
-  { type: 'negative' },
-  { type: 'normal' },
-  { type: 'positive' },
-  { type: 'negative' },
-  { type: 'normal' },
-  { type: 'end', label: 'VOCÊ CHEGOU!' }
+  { type: 'positive' }, { type: 'normal' }, { type: 'positive' }, { type: 'negative' },
+  { type: 'positive' }, { type: 'normal' }, { type: 'positive' }, { type: 'negative' },
+  { type: 'positive' }, { type: 'normal' }, { type: 'negative' }, { type: 'positive' },
+  { type: 'normal' }, { type: 'negative' }, { type: 'positive' }, { type: 'normal' },
+  { type: 'positive' }, { type: 'negative' }, { type: 'normal' }, { type: 'positive' },
+  { type: 'negative' }, { type: 'normal' }, { type: 'positive' }, { type: 'negative' },
+  { type: 'normal' }, { type: 'end', label: 'VOCÊ CHEGOU!' }
 ];
+
 const GREEN_CARDS = [
   { title: "Parabéns!", text: "Você ajudou a plantar uma árvore no seu bairro. Avance 2 casas.", move: 2 },
   { title: "Bom trabalho!", text: "Você reutilizou materiais para seu projeto de artes. Avance 3 casas.", move: 3 },
@@ -181,6 +207,7 @@ const GREEN_CARDS = [
   { title: "Excelente!", text: "Você fez um brinquedo reutilizando uma garrafa pet. Avance 2 casas.", move: 2 },
   { title: "Parabéns!", text: "Você desligou as luzes e reduziu o consumo de energia. Avance 1 casa.", move: 1 }
 ];
+
 const RED_CARDS = [
   { title: "Oh, não", text: "Você esqueceu as luzes acesas ao sair de casa. Volte 1 casa.", move: -1 },
   { title: "Não acredito!", text: "Você deixou a torneira aberta em quanto escovava os dentes. Volte 2 casas.", move: -2 },
@@ -192,6 +219,7 @@ const RED_CARDS = [
   { title: "Não foi legal", text: "Você demorou no banho e desperdiçou água. Volte 3 casas.", move: -3 },
   { title: "Não acredito!", text: "Você jogou uma lata na lixeira destinada ao plástico. Volte uma casa.", move: -1 }
 ];
+
 let renderer, scene, camera;
 let boardSpaces = [];
 let pawns = [];
@@ -203,27 +231,29 @@ let cardObj = null;
 let gameState = 'start';
 let winner = null;
 let rollButton, restartButton, startButton, uiText;
+
 function createBoardPath(numSpaces) {
   const path = [];
-  const boardWidth = 5; 
-  const spaceSize = 2; 
+  const boardWidth = 5;
+  const spaceSize = 2;
   const startX = -(boardWidth / 2 - 0.5) * spaceSize;
   const startZ = -(numSpaces / boardWidth / 2 - 0.5) * spaceSize;
   let x = startX;
   let z = startZ;
-  let direction = 1; 
+  let direction = 1;
   for (let i = 0; i < numSpaces; i++) {
     path.push(new THREE.Vector3(x, 0, z));
-    if (i % boardWidth === boardWidth - 1) { 
+    if (i % boardWidth === boardWidth - 1) {
       z += spaceSize;
-      direction *= -1; 
-      x += spaceSize * direction; 
+      direction *= -1;
+      x += spaceSize * direction;
     } else {
       x += spaceSize * direction;
     }
   }
   return path;
 }
+
 function createSpaceMesh(type, label) {
   let color;
   if (type === 'start') color = 0xffff99;
@@ -231,12 +261,11 @@ function createSpaceMesh(type, label) {
   else if (type === 'positive') color = 0x88ee99;
   else if (type === 'negative') color = 0xee8888;
   else color = 0xe0d7b1;
-  const geom = new THREE.BoxGeometry(2, 0.2, 2); 
+  
+  const geom = new THREE.BoxGeometry(2, 0.2, 2);
   const mat = new THREE.MeshStandardMaterial({ color });
   const mesh = new THREE.Mesh(geom, mat);
-  if (type === 'positive' || type === 'negative') {
-
-  }
+  
   if (label) {
     const canvas = document.createElement('canvas');
     canvas.width = 256; canvas.height = 64;
@@ -248,13 +277,14 @@ function createSpaceMesh(type, label) {
     const tex = new THREE.CanvasTexture(canvas);
     const labelMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
     const labelMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.4), labelMat);
-    labelMesh.position.y = 0.15; 
-    labelMesh.position.z = 1.01; 
-    labelMesh.rotation.x = -Math.PI / 2; 
+    labelMesh.position.y = 0.15;
+    labelMesh.position.z = 1.01;
+    labelMesh.rotation.x = -Math.PI / 2;
     mesh.add(labelMesh);
   }
   return mesh;
 }
+
 function createPawn(color) {
   const base = new THREE.CylinderGeometry(0.35, 0.45, 0.25, 20);
   const body = new THREE.CylinderGeometry(0.25, 0.25, 0.6, 20);
@@ -271,14 +301,14 @@ function createPawn(color) {
   group.add(headMesh);
   return group;
 }
+
 function createDice() {
-  const geom = new THREE.BoxGeometry(1, 1, 1); 
+  const geom = new THREE.BoxGeometry(1, 1, 1);
   const materials = [];
   const faceLabels = [1, 2, 3, 4, 5, 6];
   for (let i = 0; i < 6; i++) {
     const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
+    canvas.width = 128; canvas.height = 128;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = "#fff";
     ctx.fillRect(0, 0, 128, 128);
@@ -293,9 +323,10 @@ function createDice() {
     materials.push(new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(canvas) }));
   }
   const mesh = new THREE.Mesh(geom, materials);
-  mesh.position.set(0, 2, 8); 
+  mesh.position.set(0, 2, 8);
   return mesh;
 }
+
 function createCardMesh(card, color) {
   const canvas = document.createElement('canvas');
   canvas.width = 512; canvas.height = 320;
@@ -315,10 +346,11 @@ function createCardMesh(card, color) {
   wrapText(ctx, card.text, 256, 120, 440, 36);
   const tex = new THREE.CanvasTexture(canvas);
   const mat = new THREE.MeshBasicMaterial({ map: tex });
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 3.125), mat); 
-  mesh.position.set(0, 1.8, 1.5); 
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 3.125), mat);
+  mesh.position.set(0, 1.8, 1.5);
   return mesh;
 }
+
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split(' ');
   let line = '';
@@ -336,6 +368,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   }
   ctx.fillText(line, x, y);
 }
+
 function showCard(card, color, onComplete) {
   if (cardObj) scene.remove(cardObj);
   cardObj = createCardMesh(card, color);
@@ -350,6 +383,7 @@ function showCard(card, color, onComplete) {
   }
   animateFlip();
 }
+
 function createCardStack(color, pos) {
   const geom = new THREE.BoxGeometry(0.5, 0.08, 0.7);
   const mat = new THREE.MeshStandardMaterial({ color: color === 'green' ? 0x2ecc40 : 0xe74c3c });
@@ -375,24 +409,27 @@ function createCardStack(color, pos) {
   group.position.y = 0.2;
   return group;
 }
+
 function setUI(text, showRoll, showRestart, showStart) {
   uiText.innerText = text;
   rollButton.style.display = showRoll ? '' : 'none';
   restartButton.style.display = showRestart ? '' : 'none';
   startButton.style.display = showStart ? '' : 'none';
 }
+
 function nextTurn() {
   if (gameState !== 'playing') return;
   currentPlayer = 1 - currentPlayer;
   setUI(`Vez do Jogador ${currentPlayer + 1} (${currentPlayer === 0 ? "Azul" : "Vermelho"})`, true, false, false);
 }
+
 function rollDice() {
   if (isAnimating || gameState !== 'playing') return;
   isAnimating = true;
   let rolls = 18 + Math.floor(Math.random() * 8);
   let rot = 0;
   function animateRoll() {
-    diceValue = 1 + Math.floor(Math.random() * 6); 
+    diceValue = 1 + Math.floor(Math.random() * 6);
     diceObj.rotation.x += 0.3 + Math.random() * 0.2;
     diceObj.rotation.y += 0.4 + Math.random() * 0.2;
     rot++;
@@ -401,6 +438,7 @@ function rollDice() {
   }
   animateRoll();
 }
+
 function movePawn(steps) {
   let idx = pawnPositions[currentPlayer];
   let path = boardSpaces.map(b => b.position);
@@ -442,6 +480,7 @@ function movePawn(steps) {
   if (positions.length > 0) stepMove();
   else checkWin();
 }
+
 function drawCard(color) {
   const deck = color === 'green' ? GREEN_CARDS : RED_CARDS;
   const card = deck[Math.floor(Math.random() * deck.length)];
@@ -467,6 +506,7 @@ function drawCard(color) {
     animateMove();
   });
 }
+
 function checkWin() {
   let idx = pawnPositions[currentPlayer];
   if (idx >= boardSpaces.length - 1) {
@@ -479,89 +519,68 @@ function checkWin() {
   isAnimating = false;
   nextTurn();
 }
+
 function restartGame() {
   pawnPositions = [0, 0];
   pawns[0].position.copy(boardSpaces[0].position);
   pawns[1].position.copy(boardSpaces[0].position);
+  pawns[0].position.x -= 0.35;
+  pawns[1].position.x += 0.35;
   currentPlayer = 0;
   winner = null;
   gameState = 'playing';
   setUI(`Vez do Jogador 1 (Azul)`, true, false, false);
 }
+
 function startGame() {
   restartGame();
   gameState = 'playing';
   setUI(`Vez do Jogador 1 (Azul)`, true, false, false);
 }
+
 function setupUI() {
-  uiText = document.createElement('div');
-  uiText.style.position = 'absolute';
-  uiText.style.top = '220px';
-  uiText.style.left = '50%';
-  uiText.style.transform = 'translateX(-50%)';
-  uiText.style.font = 'bold 32px Arial';
-  uiText.style.color = '#2c3e50';
-  uiText.style.textShadow = '1px 1px 4px #fff';
-  document.body.appendChild(uiText);
-  rollButton = document.createElement('button');
-  rollButton.innerText = 'Rolar Dado';
-  rollButton.style.position = 'absolute';
-  rollButton.style.bottom = '40px';
-  rollButton.style.left = '50%';
-  rollButton.style.transform = 'translateX(-50%)';
-  rollButton.style.fontSize = '28px';
-  rollButton.style.padding = '14px 48px';
-  rollButton.style.background = '#2ecc40';
-  rollButton.style.color = '#fff';
-  rollButton.style.border = 'none';
-  rollButton.style.borderRadius = '10px';
-  rollButton.style.cursor = 'pointer';
-  document.body.appendChild(rollButton);
-  restartButton = document.createElement('button');
-  restartButton.innerText = 'Reiniciar';
-  restartButton.style.position = 'absolute';
-  restartButton.style.bottom = '40px';
-  restartButton.style.left = 'calc(50% + 180px)';
-  restartButton.style.fontSize = '24px';
-  restartButton.style.padding = '10px 30px';
-  restartButton.style.background = '#e74c3c';
-  restartButton.style.color = '#fff';
-  restartButton.style.border = 'none';
-  restartButton.style.borderRadius = '10px';
-  restartButton.style.cursor = 'pointer';
-  document.body.appendChild(restartButton);
-  startButton = document.createElement('button');
-  startButton.innerText = 'Começar Jogo';
-  startButton.style.position = 'absolute';
-  startButton.style.bottom = '40px';
-  startButton.style.left = '50%';
-  startButton.style.transform = 'translateX(-50%)';
-  startButton.style.fontSize = '32px';
-  startButton.style.padding = '18px 60px';
-  startButton.style.background = '#3498db';
-  startButton.style.color = '#fff';
-  startButton.style.border = 'none';
-  startButton.style.borderRadius = '12px';
-  startButton.style.cursor = 'pointer';
-  document.body.appendChild(startButton);
+  uiText = document.getElementById('uiText');
+  rollButton = document.getElementById('rollButton');
+  restartButton = document.getElementById('restartButton');
+  startButton = document.getElementById('startButton');
+  
   rollButton.onclick = rollDice;
   restartButton.onclick = restartGame;
   startButton.onclick = startGame;
 }
+
 function setupScene() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setClearColor(0xccefff);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+  const gameContainer = document.getElementById('gameContainer');
+  gameContainer.appendChild(renderer.domElement);
+  
+  function updateSize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    
+    // Ajuste a posição da câmera para mobile
+    if (width < 768) {
+      camera.position.set(0, 16, 20);
+      camera.lookAt(0, 0, 0);
+    } else {
+      camera.position.set(0, 14, 18);
+      camera.lookAt(0, 2, 0);
+    }
+  }
+  
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 14, 18);
-  camera.lookAt(0, 2, 0);
+  
   const ambient = new THREE.AmbientLight(0xffffff, 0.82);
   scene.add(ambient);
   const dir = new THREE.DirectionalLight(0xffffff, 0.85);
   dir.position.set(10, 20, 10);
   scene.add(dir);
+  
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(60, 60),
     new THREE.MeshLambertMaterial({ color: 0xa3d977 })
@@ -569,14 +588,16 @@ function setupScene() {
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -0.15;
   scene.add(ground);
+  
   const river = new THREE.Mesh(
-    new THREE.PlaneGeometry(60, 10), 
-    new THREE.MeshLambertMaterial({ color: 0x64b5f6 }) 
+    new THREE.PlaneGeometry(60, 10),
+    new THREE.MeshLambertMaterial({ color: 0x64b5f6 })
   );
   river.rotation.x = -Math.PI / 2;
-  river.position.set(0, -0.1, -20); 
+  river.position.set(0, -0.1, -20);
   scene.add(river);
-  for (let i = 0; i < 25; i++) { 
+  
+  for (let i = 0; i < 25; i++) {
     const tree = new THREE.Group();
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.16, 1.1, 8), new THREE.MeshStandardMaterial({ color: 0x9b7653 }));
     trunk.position.y = 0.55;
@@ -590,13 +611,9 @@ function setupScene() {
       xPos = -25 + Math.random() * 50;
       zPos = -25 + Math.random() * 50;
       tries++;
-    } while (
-      (
-        zPos > -25 && zPos < -15 && Math.abs(xPos) < 30
-      ) && tries < 10
-    );
+    } while ((zPos > -25 && zPos < -15 && Math.abs(xPos) < 30) && tries < 10);
     if (zPos > -25 && zPos < -15 && Math.abs(xPos) < 30) {
-      zPos = -15 + (Math.random() > 0.5 ? 6 : -6); 
+      zPos = -15 + (Math.random() > 0.5 ? 6 : -6);
     }
     if (Math.abs(xPos) < 10 && Math.abs(zPos) < 10) {
       xPos += (xPos > 0 ? 1 : -1) * 10;
@@ -605,58 +622,7 @@ function setupScene() {
     tree.position.set(xPos, 0, zPos);
     scene.add(tree);
   }
-  for (let i = 0; i < 10; i++) {
-    const bush = new THREE.Mesh(
-      new THREE.SphereGeometry(0.45 + Math.random() * 0.25, 14, 14),
-      new THREE.MeshStandardMaterial({ color: 0x3ca55c })
-    );
-    let x = -24 + Math.random() * 48;
-    let z = -24 + Math.random() * 48;
-    if (z > -25 && z < -15 && Math.abs(x) < 30) z = -25 + Math.random() * 5;
-    bush.position.set(x, 0.3, z);
-    scene.add(bush);
-  }
-  for (let i = 0; i < 6; i++) {
-    const rock = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(0.36 + Math.random() * 0.2),
-      new THREE.MeshStandardMaterial({ color: 0xbbb9b5 })
-    );
-    let x = -24 + Math.random() * 48;
-    let z = -24 + Math.random() * 48;
-    if (z > -25 && z < -15 && Math.abs(x) < 30) z = -25 + Math.random() * 5;
-    rock.position.set(x, 0.14, z);
-    rock.rotation.y = Math.random() * Math.PI * 2;
-    scene.add(rock);
-  }
-  for (let i = 0; i < 8; i++) {
-    const flower = new THREE.Group();
-    const stem = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.03, 0.04, 0.28, 8),
-      new THREE.MeshStandardMaterial({ color: 0x4caf50 })
-    );
-    stem.position.y = 0.14;
-    flower.add(stem);
-    const petalColors = [0xffe066, 0xff66b2, 0x66b3ff, 0xffb266];
-    for (let j = 0; j < 6; j++) {
-      const petal = new THREE.Mesh(
-        new THREE.SphereGeometry(0.07, 8, 8),
-        new THREE.MeshStandardMaterial({ color: petalColors[Math.floor(Math.random()*petalColors.length)] })
-      );
-      petal.position.set(Math.cos(j * Math.PI/3) * 0.13, 0.28, Math.sin(j * Math.PI/3) * 0.13);
-      flower.add(petal);
-    }
-    const center = new THREE.Mesh(
-      new THREE.SphereGeometry(0.06, 8, 8),
-      new THREE.MeshStandardMaterial({ color: 0xffe066 })
-    );
-    center.position.set(0, 0.28, 0);
-    flower.add(center);
-    let x = -24 + Math.random() * 48;
-    let z = -24 + Math.random() * 48;
-    if (z > -25 && z < -15 && Math.abs(x) < 30) z = -25 + Math.random() * 5;
-    flower.position.set(x, 0, z);
-    scene.add(flower);
-  }
+  
   const path = createBoardPath(BOARD_SPACES.length);
   boardSpaces = [];
   for (let i = 0; i < BOARD_SPACES.length; i++) {
@@ -665,32 +631,36 @@ function setupScene() {
     boardSpaces.push({ mesh: space, position: path[i] });
     scene.add(space);
   }
+  
   pawns = [createPawn(0x3498db), createPawn(0xe74c3c)];
   pawns[0].position.copy(boardSpaces[0].position);
   pawns[1].position.copy(boardSpaces[0].position);
-  pawns[0].position.x -= 0.35; 
-  pawns[1].position.x += 0.35; 
+  pawns[0].position.x -= 0.35;
+  pawns[1].position.x += 0.35;
   scene.add(pawns[0]);
   scene.add(pawns[1]);
+  
   diceObj = createDice();
-  const greenStack = createCardStack('green', new THREE.Vector3(-6, 0, 0)); 
+  scene.add(diceObj);
+  
+  const greenStack = createCardStack('green', new THREE.Vector3(-6, 0, 0));
   scene.add(greenStack);
-  const redStack = createCardStack('red', new THREE.Vector3(6, 0, 0)); 
+  const redStack = createCardStack('red', new THREE.Vector3(6, 0, 0));
   scene.add(redStack);
-  window.addEventListener('resize', onWindowResize);
+  
+  updateSize();
+  window.addEventListener('resize', updateSize);
 }
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
+
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
+
 function showStartScreen() {
   setUI('EcoJourney', false, false, true);
 }
+
 setupScene();
 setupUI();
 showStartScreen();
